@@ -18,7 +18,7 @@ if (isset($_SESSION["cart_items"])) {
             echo "<td>" . $cartItem["product"] . "</td>";
             echo "<td>";
             echo "<div class='quantity-input'>";
-            echo "<input type='number' id='quantity' name='quantity' min='1' max='99' value='" . $cartItem["quantity"] . "'>";
+            echo "<input type='number' id='quantity_" . $key . "' name='quantity' min='1' max='99' value='" . $cartItem["quantity"] . "' onchange='updateQuantity(" . $key . ", this.value)'>";
             echo "</div>";
             echo "</td>";
             echo "<td>";
@@ -130,5 +130,30 @@ if (isset($_SESSION["cart_items"])) {
         Products</button>
 
 </body>
+<script>
+function updateQuantity(rowIndex, newQuantity) {
+    // Create an AJAX request
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'update_quantity.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
+    // Send the row index and new quantity as parameters
+    var params = 'row_index=' + encodeURIComponent(rowIndex) + '&quantity=' + encodeURIComponent(newQuantity);
+    xhr.send(params);
+
+    // Handle the AJAX response
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // Update the quantity in the session (optional)
+            var response = xhr.responseText;
+            if (response === "Quantity updated successfully") {
+                // Optionally update the quantity value in the session if needed
+                // Example: sessionCartItems[rowIndex].quantity = newQuantity;
+            } else {
+                // Handle the error case if necessary
+            }
+        }
+    };
+}
+</script>
 </html>
